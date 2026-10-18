@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#061116" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="漫游坐标" />
+    <meta name="description" content="转动地球，让一个未曾计划的坐标成为你的下一段故事。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="漫游坐标" />
+    <meta property="og:title" content="漫游坐标｜下一站，地球" />
+    <meta property="og:description" content="转动地球，让一个未曾计划的坐标成为你的下一段故事。" />
+    <meta property="og:image" content="./assets/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1536" />
+    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:alt" content="漫游坐标：下一站，地球" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="漫游坐标｜下一站，地球" />
+    <meta name="twitter:description" content="转动地球，让一个未曾计划的坐标成为你的下一段故事。" />
+    <meta name="twitter:image" content="./assets/og.png" />
+    <title>漫游坐标｜下一站，地球</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" sizes="180x180" />
+    <link rel="icon" href="./assets/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="./assets/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" sizes="any" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./vendor-geo.js"></script>
+    <script defer src="./atlas.js"></script>
+    <script defer src="./data.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <main class="site-shell">
+      <div class="ambient ambient-one" aria-hidden="true"></div>
+      <div class="ambient ambient-two" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <button class="brand" id="brand-home" type="button" aria-label="返回首页">
+          <span class="brand-mark" aria-hidden="true"><span></span></span>
+          <span><strong>漫游坐标</strong><small>ROAM THE UNKNOWN</small></span>
+        </button>
+
+        <div class="topbar-center">
+          <div class="topbar-status"><i></i> UN M49 地域体系已接入</div>
+          <form class="map-search" id="search-form" role="search" autocomplete="off">
+            <span class="search-symbol" aria-hidden="true">⌕</span>
+            <input
+              id="search-input"
+              type="search"
+              placeholder="搜索城市、国家或旅行类型"
+              aria-label="搜索城市、国家或旅行类型"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded="false"
+              aria-controls="search-results"
+            />
+            <button class="search-clear" id="search-clear" type="button" aria-label="清空搜索">×</button>
+            <button class="search-submit" id="search-submit" type="submit">定位</button>
+            <div class="search-results" id="search-results" role="listbox" hidden></div>
+          </form>
+        </div>
+
+        <nav aria-label="个人旅行列表">
+          <button type="button" data-drawer="history">旅行足迹 <b id="history-count">0</b></button>
+          <button type="button" data-drawer="favorites">收藏 <b id="favorites-count">0</b></button>
+        </nav>
+      </header>
+
+      <section class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span>01</span> RANDOM JOURNEY</p>
+          <h1><span class="hero-title-line">下一站，</span><br /><span class="hero-title-line">地球。</span></h1>
+          <p class="hero-subtitle">
+            无需攻略，也不必先有答案。转动地球，让一个未曾计划的坐标成为你的下一段故事。
+          </p>
+          <div class="signal-row">
+            <div class="signal-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div><strong><span id="destination-total">600</span> 个灵感坐标</strong><small>22 个 M49 地域 · 配额完整覆盖</small></div>
+          </div>
+        </div>
+
+        <div class="globe-stage" id="globe-stage" aria-live="polite">
+          <div class="orbit orbit-one" aria-hidden="true"></div>
+          <div class="orbit orbit-two" aria-hidden="true"></div>
+          <div class="axis-label axis-left" id="axis-lat">10°N</div>
+          <div class="axis-label axis-right" id="axis-lon">20°E</div>
+          <canvas
+            class="globe-canvas"
+            id="globe-canvas"
+            tabindex="0"
+            aria-label="可拖动旋转、滚轮缩放的互动地球"
+          ></canvas>
+          <div class="scanline" id="scanline" aria-hidden="true"></div>
+
+          <div class="region-focus-label" id="region-focus" hidden>
+            <span id="region-code"></span>
+            <strong id="region-name"></strong>
+            <small id="region-meta"></small>
+          </div>
+
+          <div class="globe-country-selection" id="country-selection" hidden>
+            <small>COUNTRY SIGNAL</small>
+            <strong id="country-selection-name"></strong>
+            <span>点击地图识别</span>
+          </div>
+
+          <div class="locked-label" id="locked-label" hidden>
+            <span></span><b id="locked-coordinates"></b>
+          </div>
+
+          <div class="country-static-beacon" id="destination-beacon" hidden>
+            <small>COORDINATE LOCKED</small>
+            <strong id="beacon-city"></strong>
+            <span id="beacon-country"></span>
+          </div>
+
+          <div class="globe-status" id="globe-status">
+            <small id="globe-hint">点击国家查看名称 · 拖动旋转</small>
+            <strong id="ticker">等待一次心血来潮</strong>
+          </div>
+        </div>
+
+        <aside class="control-card" id="control-card">
+          <div class="card-kicker"><span>TRIP GENERATOR</span><i>●</i></div>
+          <h2 id="control-title">设置随机半径</h2>
+          <p id="control-copy">先按联合国 M49 选择地域，再让地球在真实匹配中做决定。</p>
+
+          <button class="mobile-filter-summary" id="mobile-filter-open" type="button" aria-haspopup="dialog" aria-expanded="false">
+            <span><small>当前筛选</small><strong id="mobile-filter-label">全球 · 随机</strong></span>
+            <span class="mobile-filter-summary-meta"><b id="mobile-pool-count">600</b><small>个坐标</small><i>调整</i></span>
+          </button>
+          <button class="mobile-sheet-backdrop" id="mobile-filter-backdrop" type="button" aria-label="关闭筛选" hidden></button>
+
+          <div class="filters" id="filters">
+            <div class="mobile-sheet-head">
+              <div><small>TRIP GENERATOR</small><h3 id="filter-dialog-title">调整随机半径</h3></div>
+              <button id="mobile-filter-close" type="button" aria-label="关闭筛选">×</button>
+            </div>
+
+            <fieldset id="region-fieldset">
+              <legend>目的地大区 <small>UN M49</small></legend>
+              <div class="chip-grid region-grid" id="region-grid"></div>
+            </fieldset>
+            <fieldset class="subregion-fieldset" id="subregion-fieldset" hidden>
+              <legend>地域细分 <small id="subregion-legend"></small></legend>
+              <div class="chip-grid subregion-grid" id="subregion-grid"></div>
+            </fieldset>
+            <fieldset id="theme-fieldset">
+              <legend>旅行灵感 <small>严格匹配</small></legend>
+              <div class="chip-grid theme-grid" id="theme-grid"></div>
+            </fieldset>
+
+            <div class="match-count">
+              <span id="pool-count">600</span>
+              <div>个坐标严格匹配当前筛选<small id="scope-count"></small></div>
+            </div>
+            <button class="mobile-sheet-apply" id="mobile-filter-apply" type="button">
+              <span>应用筛选</span><small id="mobile-filter-apply-meta"></small>
+            </button>
+          </div>
+
+          <article class="result" id="result" hidden>
+            <div class="result-heading">
+              <div><small id="result-kicker"></small><h3 id="result-city"></h3></div>
+              <button class="favorite" id="favorite-button" type="button" aria-label="收藏目的地">☆</button>
+            </div>
+            <p class="tagline" id="result-tagline"></p>
+            <div class="trip-metrics">
+              <div><small>推荐季节</small><strong id="result-season"></strong></div>
+              <div><small>理想停留</small><strong id="result-days"></strong></div>
+              <div><small>预算参考</small><strong id="result-budget"></strong></div>
+            </div>
+            <button class="inspiration-toggle" id="inspiration-toggle" type="button" aria-expanded="false">
+              旅行灵感 <span>展开 ↗</span>
+            </button>
+            <ul class="highlights" id="highlights" hidden></ul>
+          </article>
+
+          <button class="launch-button" id="launch-button" type="button">
+            <span class="launch-icon" id="launch-icon">↗</span>
+            <span><strong id="launch-label">转动地球</strong><small id="launch-meta">LET THE EARTH DECIDE</small></span>
+          </button>
+          <button class="reset-button" id="reset-button" type="button" hidden>调整偏好</button>
+          <p class="fine-print">灵感坐标 · 出发前请核对签证、开放状态与实时安全提示</p>
+        </aside>
+      </section>
+
+      <footer class="footer-strip">
+        <span>DRAG TO EXPLORE</span>
+        <div class="footer-line"><i></i></div>
+        <span id="distance-label">THE WORLD IS WIDER THAN THE PLAN</span>
+      </footer>
+    </main>
+
+    <div class="drawer-backdrop" id="drawer-backdrop" hidden>
+      <section class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+        <div class="drawer-head">
+          <div><small>YOUR ROAMING ATLAS</small><h2 id="drawer-title"></h2></div>
+          <button id="drawer-close" type="button" aria-label="关闭">×</button>
+        </div>
+        <div class="drawer-list" id="drawer-list"></div>
+      </section>
+    </div>
+
+    <noscript><div class="static-load-error">这个静态页面需要启用 JavaScript。</div></noscript>
+  </body>
+</html>

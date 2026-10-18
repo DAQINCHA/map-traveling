@@ -1,0 +1,25 @@
+{
+  "name": "漫游坐标｜下一站，地球",
+  "short_name": "漫游坐标",
+  "description": "转动地球，让一个未曾计划的坐标成为你的下一段故事。",
+  "lang": "zh-CN",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#061116",
+  "theme_color": "#061116",
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
