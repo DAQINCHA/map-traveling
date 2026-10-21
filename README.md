@@ -22,10 +22,9 @@
 - `assets/favicon.svg` 与 `assets/icon-*.png`：标签页及桌面快捷方式图标
 - `manifest.webmanifest`：桌面与移动设备安装清单
 - `app.js`：原生 JavaScript 交互（唯一手写脚本）
-- `styles.css`：样式（生成）
-- `data/destinations.js`：目的地与地域数据（生成）
-- `data/atlas.js`：本地世界地图数据（生成）
-- `vendor/geo.js`：地图投影与边界裁切，提取自第三方 d3-geo（生成）
-- `tools/build-static.mjs`：从原项目重新生成上面四份生成物。
+- `styles.css`：样式，自 React 版导出
+- `data/destinations.js`：目的地与地域数据，自 React 版导出
+- `data/atlas.js`：本地世界地图数据，自 React 版导出
+- `vendor/geo.js`：地图投影与边界裁切，自 React 版打包产物中提取的第三方 d3-geo
 
-`data/`、`vendor/geo.js`、`styles.css` 都是产物，改了会被重新生成覆盖。生成脚本需要原项目源码（上两级的 `app/*.ts` 与 `dist/client/assets/*.js`），那份源码目前已不在这台机器上，脚本仅作溯源参考，直接运行会报找不到文件。
+`styles.css`、`data/`、`vendor/geo.js` 都是当年从 React 版一次性导出的产物，仓库里没有生成脚本，原项目源码也不在这里——**它们就是唯一副本，需要改样式或数据时直接改这些文件**。
