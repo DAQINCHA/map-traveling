@@ -1,9 +1,13 @@
+// 从原项目（React + TS）重新生成静态资源：data/、vendor/geo.js 与 styles.css。
+// 需要原项目源码存在（上两级的 app/*.ts 与 dist/client/assets/*.js），本地已无这份源码，仅供溯源参考。
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const staticRoot = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(staticRoot, "..");
+const toolsRoot = path.dirname(fileURLToPath(import.meta.url));
+const siteRoot = path.resolve(toolsRoot, "..");
+const projectRoot = path.resolve(siteRoot, "..");
+for (const dir of ["data", "vendor"]) fs.mkdirSync(path.join(siteRoot, dir), { recursive: true });
 const read = (relativePath) =>
   fs.readFileSync(path.join(projectRoot, relativePath), "utf8");
 const evaluate = (source) => Function(`"use strict"; return (${source});`)();
@@ -130,7 +134,7 @@ const payload = {
   countryIdsByLeaf: evaluate(countryIdsMatch[1]),
 };
 fs.writeFileSync(
-  path.join(staticRoot, "data.js"),
+  path.join(siteRoot, "data", "destinations.js"),
   `/* Generated from the untouched source data. */\nwindow.ROAM_DATA=${JSON.stringify(payload)};\n`,
 );
 
@@ -144,7 +148,7 @@ if (!atlasModule.endsWith(atlasExport)) {
   throw new Error("Unexpected world-atlas module export");
 }
 fs.writeFileSync(
-  path.join(staticRoot, "atlas.js"),
+  path.join(siteRoot, "data", "atlas.js"),
   "/* Generated from the project's built atlas. */\n(()=>{\n" +
     atlasModule.slice(0, -atlasExport.length) +
     "\nwindow.ROAM_TOPOLOGY=u;window.ROAM_TO_FEATURE=r;window.ROAM_TO_MESH=s;\n})();\n",
@@ -160,7 +164,7 @@ if (d3Start < 0 || d3End < 0) {
 }
 const d3Source = pageBundle.slice(d3Start, d3End + d3EndMarker.length);
 fs.writeFileSync(
-  path.join(staticRoot, "vendor-geo.js"),
+  path.join(siteRoot, "vendor", "geo.js"),
   "/* Geographic renderer extracted from the project's existing compiled bundle. */\n" +
     "(()=>{\n" +
     d3Source +
@@ -185,7 +189,7 @@ const staticOverrides = `
 }
 `;
 fs.writeFileSync(
-  path.join(staticRoot, "styles.css"),
+  path.join(siteRoot, "styles.css"),
   "/* Generated from the untouched source stylesheet. */\n" + baseCss + staticOverrides,
 );
 

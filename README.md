@@ -2,7 +2,7 @@
 
 这是从原项目生成的独立静态版本，原项目文件没有被修改。
 
-直接双击 `index.html` 即可运行，也可以把整个 `static-html` 目录上传到任意静态托管服务。运行时不需要 React、Next.js、数据库、Node.js 或网络连接。
+直接双击 `index.html` 即可运行，也可以把整个 `map-traveling` 目录上传到任意静态托管服务。运行时不需要 React、Next.js、数据库、Node.js 或网络连接。
 
 当前版本保留：
 
@@ -21,9 +21,11 @@
 - `assets/og.png`：社交分享预览封面
 - `assets/favicon.svg` 与 `assets/icon-*.png`：标签页及桌面快捷方式图标
 - `manifest.webmanifest`：桌面与移动设备安装清单
-- `styles.css`：静态样式
-- `app.js`：原生 JavaScript 交互
-- `data.js`：目的地与地域数据
-- `atlas.js`：本地世界地图数据
-- `vendor-geo.js`：本地地图投影与边界裁切
-- `build-static.mjs`：从原项目重新生成静态资源
+- `app.js`：原生 JavaScript 交互（唯一手写脚本）
+- `styles.css`：样式（生成）
+- `data/destinations.js`：目的地与地域数据（生成）
+- `data/atlas.js`：本地世界地图数据（生成）
+- `vendor/geo.js`：地图投影与边界裁切，提取自第三方 d3-geo（生成）
+- `tools/build-static.mjs`：从原项目重新生成上面四份生成物。
+
+`data/`、`vendor/geo.js`、`styles.css` 都是产物，改了会被重新生成覆盖。生成脚本需要原项目源码（上两级的 `app/*.ts` 与 `dist/client/assets/*.js`），那份源码目前已不在这台机器上，脚本仅作溯源参考，直接运行会报找不到文件。
