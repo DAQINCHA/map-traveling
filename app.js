@@ -742,6 +742,8 @@
   const projection = geo.geoOrthographic().clipAngle(90).precision(0.35);
   const path = geo.geoPath(projection, context);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // 地球转动速度按「度/秒」定义，跟屏幕刷新率无关：60Hz 和 120Hz 看起来一样快
+  const spinPerSecond = reducedMotion ? 45 : 3.9;
   const camera = { lon: 20, lat: 10, zoom: 1 };
   const drag = {
     active: false,
@@ -799,7 +801,8 @@
 
   const drawFrame = (now) => {
     frameRequest = 0;
-    const elapsed = Math.min(40, now - lastFrame);
+    const rawElapsed = Math.max(0, now - lastFrame);
+    const elapsed = Math.min(40, rawElapsed);
     lastFrame = now;
     const scope = activeScope();
     const preset = scope.preset;
@@ -812,7 +815,6 @@
       targetLat = clamp(state.selected.lat, -68, 68);
       targetZoom = manualCamera?.zoom ?? 1.95;
     } else if (state.spinning) {
-      targetLon = camera.lon + elapsed * 0.045;
       targetLat =
         scope.code === "001" ? 8 + Math.sin(now / 900) * 7 : preset.lat;
       targetZoom = 0.9;
@@ -820,7 +822,12 @@
 
     if (!drag.active) {
       const ease = reducedMotion ? 1 : 1 - Math.exp(-elapsed / 185);
-      camera.lon += shortestLongitude(camera.lon, targetLon) * ease;
+      if (state.spinning) {
+        // 按「度/秒」推进；最多补 100ms，避免切回页面后猛跳一段
+        camera.lon += spinPerSecond * (Math.min(100, rawElapsed) / 1000);
+      } else {
+        camera.lon += shortestLongitude(camera.lon, targetLon) * ease;
+      }
       camera.lat += (targetLat - camera.lat) * ease;
       camera.zoom += (targetZoom - camera.zoom) * ease;
     }
